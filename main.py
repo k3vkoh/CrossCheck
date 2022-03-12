@@ -1,7 +1,8 @@
 import getFromPDF
 import getFromAPI
 
-syllabus = "theatre.pdf"
+# syllabus = "theatre.pdf"
+syllabus = "pulse.pdf"
 
 def main():
 	# print("main")
