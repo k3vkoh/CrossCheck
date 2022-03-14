@@ -6,7 +6,8 @@ syllabus = "pulse.pdf"
 
 def main():
 	# print("main")
-	getFromPDF.extract(syllabus)
+	# getFromPDF.extract(syllabus)
+	getFromAPI.extract()
 
 if __name__ == "__main__":
 	main()
