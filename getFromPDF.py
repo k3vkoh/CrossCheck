@@ -27,6 +27,13 @@ def extract(syllabus):
 
 		i = 0
 		while i < len(text_list):
+			# make a list and then iterate through for each defined pattern
+			# if re.search("[0-1][0-9][/][0-9][0-9]"):
+			# 	pattern = "[0-1][0-9][/][0-9][0-9]"
+			# 	extract = True
+			#  ....
+			# if extract:
+			# 	temp = text_list ...
 			pattern = "([0-1][0-9][/][0-9][0-9]|[0-1][0-9][/][0-9]|[0-9][/][0-9][0-9]|[0-9][/][0-9])"
 			if re.search(pattern, text_list[i]):
 				print(text_list[i])
