@@ -1,13 +1,7 @@
 import requests 
 import json
 from datetime import datetime, timezone
-
-token = "1019~wYCvNSHeAkCg9Va6rQDTFipPKzzTtAECooM6G8msOUL8fhM2yrACqfYzP0WRo8TG"
-
-headers = {"Authorization" : "Bearer {}".format(token)}
-params = {"state[]" : "all"}
-
-my_courses = [1630778, 1631956, 1628579, 1631190]
+import toDB
 
 def utc_to_local(utc_dt):
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
@@ -28,10 +22,14 @@ def day_of_the_week(dayNum):
 	if dayNum ==  6:
 		return "Sunday"
 
-def extract(course):
-	final_sch = {"course": [] ,"name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
+def extract(email, token, course):
 
-	url = "https://bostoncollege.instructure.com/api/v1/courses/{}/assignment_groups?exclude_assignment_submission_types%5B%5D=wiki_page&exclude_response_fields%5B%5D=description&exclude_response_fields%5B%5D=rubric&include%5B%5D=assignments&include%5B%5D=discussion_topic&override_assignment_dates=true&per_page=50".format(str(course))
+	headers = {"Authorization" : "Bearer {}".format(token)}
+	params = {"state[]" : "all"}
+
+	final_sch = {"email" : [],"course_num": [] ,"assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
+
+	url = "https://bostoncollege.instructure.com/api/v1/courses/{}/assignment_groups?exclude_assignment_submission_types%5B%5D=wiki_page&exclude_response_fields%5B%5D=description&exclude_response_fields%5B%5D=rubric&include%5B%5D=assignments&include%5B%5D=discussion_topic&override_assignment_dates=true&per_page=50".format(course)
 
 	r = requests.get(url, headers = headers, params = params)
 
@@ -56,8 +54,9 @@ def extract(course):
 				due_date = ""
 				due_time = ""
 				day_name = ""
-			final_sch["course"].append(course)
-			final_sch["name"].append(assignment_name)
+			final_sch["email"].append(email)
+			final_sch["course_num"].append(course)
+			final_sch["assignment_name"].append(assignment_name)
 			final_sch["due_date"].append(due_date)
 			final_sch["due_time"].append(due_time)
 			final_sch["day_name"].append(day_name)
@@ -69,26 +68,8 @@ def extract(course):
 	# 		json.dump(final_sch, json_file, indent = 1)
 			# json.dump(r.json(), json_file, indent = 1)
 
-	return final_sch
+	toDB.add_schedule(final_sch)
 
 
 
-
-
-
-
-
-
-# url = "https://bostoncollege.instructure.com/api/v1/courses/1631325/assignment_groups?exclude_assignment_submission_types%5B%5D=wiki_page&exclude_response_fields%5B%5D=description&exclude_response_fields%5B%5D=rubric&include%5B%5D=assignments&include%5B%5D=discussion_topic&override_assignment_dates=true&per_page=50"
-
-
-
-
-
-
-
-
-
-#  make sure to get the current time zone of the parse inorder
-#  to change the time in the future
 
