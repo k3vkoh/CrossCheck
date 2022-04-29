@@ -189,7 +189,7 @@ def schedule_to_json(email):
 			WHERE email = '{}'
 		""".format(email)
 	df = pd.read_sql(sql, engine)
-	file = df.to_json(index = False, orient = 'split', indent = 1)
+	file = df.to_json(index = False, orient = 'table', indent = 1)
 	return file
 
 
