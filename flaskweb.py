@@ -9,6 +9,7 @@ password = ""
 canvas_username = ""
 canvas_password = ""
 token = ""
+json_file = None
 
 @app.route("/")
 def home():
@@ -29,19 +30,9 @@ def call_get_token():
     canvas_username = request.form.get('canvas_username')
     canvas_password = request.form.get('canvas_password')
 
-    print(email)
-    print(password)
-    print(canvas_username)
-    print(canvas_password)
-
     toDB.get_token(canvas_username, canvas_password)
 
     return render_template('call_to_get_token.html')
-
-
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    return render_template('login.html')
 
 @app.route('/setup', methods=['POST', 'GET'])
 def setup():
@@ -52,6 +43,7 @@ def setup():
     toDB.signup(email, password, canvas_username, canvas_password, token)
     return render_template('setup.html')
 
+# add error message
 @app.route('/setup_repeat', methods=['POST', 'GET'])
 def setup_repeat():
     print(request.get_data())
@@ -66,25 +58,52 @@ def setup_repeat():
 @app.route('/schedule_su', methods=['POST', 'GET'])
 def schedule_su():
     
+    global json_file
     toDB.make_schedule(email, token)
     json_file = toDB.schedule_to_json(email)
-    print("hello")
-    print(json_file)
-    print("hello")
-    return json_file
+    return render_template("schedule_su.html")
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    return render_template('login.html')
 
 @app.route('/schedule', methods=['POST', 'GET'])
 def schedule():
     print(request.get_data())
 
-    global email, password
-    email = request.form.get('username')
-    password = request.form.get('password')
+    global json_file
+    email_local = request.form.get('username')
+    password_local = request.form.get('password')
 
-    toDB.update_schedule(email, token)
-    json_file = toDB.schedule_to_json(email)
-    print(json_file)
+    if toDB.login(email_local, password_local):
+        token_local = toDB.get_token_db(email_local)
+        toDB.update_schedule(email_local, token_local)
+        json_file = toDB.schedule_to_json(email_local)
+        return render_template("schedule.html")
+    else: 
+        return render_template("login.html")
+    return render_template("schedule.html")
+
+
+@app.route('/show_schedule', methods=['POST', 'GET'])
+def show_schedule():
+    
+    global json_file
     return json_file
+
+
+@app.route('/get_schedule/<username_local>/<password_local>')
+def get_schedule(username_local, password_local):
+    print(username_local)
+    print(password_local)
+    if toDB.login(username_local, password_local):
+        token_local = toDB.get_token_db(username_local)
+        toDB.update_schedule(username_local, token_local)
+        return toDB.schedule_to_json(username_local)
+
+    else:
+        return "Parsing Failed"
 
 if __name__ == "__main__":
     app.run()

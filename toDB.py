@@ -118,10 +118,11 @@ def login(username, password):
 		""".format(username, password)
 	df = pd.read_sql(sql, engine)
 
-	if df["email"][0] == username and df["password"][0] == password:
-		print("login success")
-		return True
-	else:
+	try:
+		if df["email"][0] == username and df["password"][0] == password:
+			print("login success")
+			return True
+	except:
 		print("login failed")
 		return False
 
@@ -140,6 +141,15 @@ def get_classes(email):
 	df = pd.read_sql(sql, engine)
 
 	return df
+
+def get_token_db(email):
+	sql = """
+			SELECT token FROM user 
+			WHERE email = '{}'
+		""".format(email)
+	df = pd.read_sql(sql, engine)
+
+	return df['token'][0]
 
 def make_schedule(email, token):
 	df = get_classes(email)
@@ -255,6 +265,8 @@ if __name__ == "__main__":
 	clear_all()
 
 	# reset()
+
+	# print(get_token_db('kohke@bc.edu'))
 
 
 
