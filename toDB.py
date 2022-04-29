@@ -3,6 +3,7 @@ from sqlalchemy.types import Text
 from sqlalchemy import create_engine
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 
 import webbrowser
 import pyautogui
@@ -19,6 +20,7 @@ def get_token(canvas_username, canvas_password):
 	url = 'https://bostoncollege.instructure.com/profile/settings'
 
 	driver = webdriver.Chrome('./chromedriver')
+	driver.maximize_window()
 	driver.get(url)
 
 	username = driver.find_element_by_xpath('//*[@id="username"]')
@@ -39,27 +41,33 @@ def get_token(canvas_username, canvas_password):
 	generate = driver.find_element_by_xpath('/html/body/div[5]/div[4]/div/button[2]')
 	generate.send_keys(Keys.RETURN)
 
-	# count = 0
-	# copy = None
-	# while count < 10 and copy == None:
-	# 	copy = pyautogui.locateOnScreen('copy.png', confidence = .9)
-	# 	time.sleep(1)
-	# 	count += 1
-	# print(copy)
-	# pyautogui.click(copy.left, copy.top-21)
-	# pyautogui.dragTo(copy.left+563, copy.top-21, button = 'left')
-	# pyautogui.hotkey('ctrl', 'c')
-	# time.sleep(1)  
-	# driver.close()
-	# return pyperclip.paste()
+	# pyautogui.moveTo(500, 427)
+	# time.sleep(2) 
+	# pyautogui.click()
+	# time.sleep(2) 
+	# pyautogui.click(clicks = 3, interval=0.25)
+	# interval=0.25
+	# pyautogui.hotkey('command', 'c')
+	# time.sleep(2) 
 
-	# token = driver.find_element_by_class_name('visible_token').get_attribute('innerHTML')
-	# print(token)
-	# return token
-
-	time.sleep(10)
-
+	pyautogui.moveTo(473, 427)
+	time.sleep(2)
+	pyautogui.dragTo(1070, 425, button = 'left')
+	time.sleep(2) 
+	pyautogui.hotkey('command', 'c')
+	time.sleep(1)  
 	driver.close()
+	token = pyperclip.paste()
+	tok_list = token.split('\n')
+	print(tok_list)
+	final_token = tok_list[0]
+	return final_token
+
+
+# undo 
+	# time.sleep(10)
+
+	# driver.close()
 
 def signup(email, password, canvas_us, canvas_pw, token):
 
@@ -232,8 +240,8 @@ def reset():
 
 
 if __name__ == "__main__":
-	# canvas_username = 'kohke'
-	# canvas_password = 'Green1Card'
+	canvas_username = 'kohke'
+	canvas_password = 'Green1Card'
 	# email = "hello@gmail.com"
 
 	# step 1, get token for sign up

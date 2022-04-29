@@ -19,27 +19,17 @@ def home():
 def signup():
     return render_template('signup.html')
 
-@app.route('/call_get_token', methods=['POST', 'GET'])
-def call_get_token():
-
-    print(request.get_data())
-
-    global email, password, canvas_username, canvas_password
-    email = request.form.get('username')
-    password = request.form.get('password')
-    canvas_username = request.form.get('canvas_username')
-    canvas_password = request.form.get('canvas_password')
-
-    toDB.get_token(canvas_username, canvas_password)
-
-    return render_template('call_to_get_token.html')
-
 @app.route('/setup', methods=['POST', 'GET'])
 def setup():
     print(request.get_data())
 
-    global token
-    token = request.form.get('token')
+    global email, password, canvas_username, canvas_password, token
+    email = request.form.get('username')
+    password = request.form.get('password')
+    canvas_username = request.form.get('canvas_username')
+    canvas_password = request.form.get('canvas_password')
+    token = toDB.get_token(canvas_username, canvas_password)
+
     toDB.signup(email, password, canvas_username, canvas_password, token)
     return render_template('setup.html')
 
@@ -85,7 +75,6 @@ def schedule():
         return render_template("login.html")
     return render_template("schedule.html")
 
-
 @app.route('/show_schedule', methods=['POST', 'GET'])
 def show_schedule():
     
@@ -93,10 +82,17 @@ def show_schedule():
     return json_file
 
 
+# for api call via app
+
+@app.route('/login_db/<username_local>/<password_local>')
+def login_db(username_local, password_local):
+    if toDB.login(username_local, password_local):
+        return "True"
+    else:
+        return "False"
+
 @app.route('/get_schedule/<username_local>/<password_local>')
 def get_schedule(username_local, password_local):
-    print(username_local)
-    print(password_local)
     if toDB.login(username_local, password_local):
         token_local = toDB.get_token_db(username_local)
         toDB.update_schedule(username_local, token_local)
@@ -105,6 +101,18 @@ def get_schedule(username_local, password_local):
     else:
         return "Parsing Failed"
 
-if __name__ == "__main__":
-    app.run()
 
+@app.route('/signup_db/<username_local>/<password_local>/<canvas_username_local>/<canvas_password_local>', methods=['POST', 'GET'])
+def signup_db(username_local, password_local, canvas_username_local, canvas_password_local):
+    token_local = toDB.get_token(canvas_username_local, canvas_password_local)
+    toDB.signup(username_local, password_local, canvas_username_local, canvas_password_local, token_local)
+    return "True"
+
+@app.route('/setup_db/<username_local>/<course_name>/<course_num>', methods=['POST', 'GET'])
+def setup_db(username_local, course_name, course_num):
+    toDB.set_up(username_local, course_name, course_num)
+    return "True"
+
+if __name__ == "__main__":
+    # app.run(ssl_context='adhoc')
+    app.run()
