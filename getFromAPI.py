@@ -27,13 +27,14 @@ def extract(email, token, course):
 	headers = {"Authorization" : "Bearer {}".format(token)}
 	params = {"state[]" : "all"}
 
-	final_sch = {"email" : [],"course_num": [] ,"assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
+	final_sch = {"email" : [],"course_num": [] ,"course_name": [], "assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
 
 	url = "https://bostoncollege.instructure.com/api/v1/courses/{}/assignment_groups?exclude_assignment_submission_types%5B%5D=wiki_page&exclude_response_fields%5B%5D=description&exclude_response_fields%5B%5D=rubric&include%5B%5D=assignments&include%5B%5D=discussion_topic&override_assignment_dates=true&per_page=50".format(course)
 
 	r = requests.get(url, headers = headers, params = params)
 
 	assignment_groups = r.json()
+	print(assignment_groups)
 	for group in assignment_groups:
 		for assignment in group["assignments"]:
 			assignment_name = assignment["name"]
@@ -54,6 +55,8 @@ def extract(email, token, course):
 				due_date = ""
 				due_time = ""
 				day_name = ""
+			course_name = toDB.get_class(email, course)
+			final_sch["course_name"].append(course_name)
 			final_sch["email"].append(email)
 			final_sch["course_num"].append(course)
 			final_sch["assignment_name"].append(assignment_name)
@@ -71,5 +74,5 @@ def extract(email, token, course):
 	toDB.add_schedule(final_sch)
 
 
-
-
+# if __name__ == "__main__":
+# 	extract("kohke@bc.edu", "1019~RyGU7GNJXgpC1fThYTSGF04F133EJomeJGMn4uWR3wqSqIPVsfsEA3YVkksLubiE", "1631190")

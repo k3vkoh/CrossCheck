@@ -150,6 +150,15 @@ def get_classes(email):
 
 	return df
 
+def get_class(email, course_num):
+	sql = """
+			SELECT course_name FROM user_classes 
+			WHERE email = '{}' and course_num = '{}'
+		""".format(email, course_num)
+	df = pd.read_sql(sql, engine)
+
+	return df["course_name"][0]
+
 def get_token_db(email):
 	sql = """
 			SELECT token FROM user 
@@ -194,7 +203,7 @@ def schedule_to_json(email):
 
 
 def add_assignment(email, course_num, assignment_name, due_date, due_time, day_name, method, submission_status):
-	schedule = {"email" : [],"course_num": [] ,"assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
+	schedule = {"email" : [],"course_num": [] ,"course_name": [], "assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
 	df = pd.DataFrame(schedule)
 	df.to_sql('assignments', engine, if_exists = 'replace', index = False)
 	print("done")
@@ -233,8 +242,8 @@ def clear_all():
 	print("cleared all")
 
 def reset():
-	final_sch = {"email" : [],"course_num": [] ,"assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
-	df = pd.DataFrame(final_sch)
+	schedule = {"email" : [],"course_num": [] ,"course_name": [], "assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
+	df = pd.DataFrame(schedule)
 	df.to_sql('assignments', engine, if_exists = 'replace', index = False, dtype = Text)
 	print("done")
 
@@ -270,9 +279,9 @@ if __name__ == "__main__":
 	# schedule_to_json(email)
 
 	# last step for demonstration
-	clear_all()
+	# clear_all()
 
-	# reset()
+	reset()
 
 	# print(get_token_db('kohke@bc.edu'))
 
