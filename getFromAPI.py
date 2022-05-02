@@ -22,7 +22,7 @@ def day_of_the_week(dayNum):
 	if dayNum ==  6:
 		return "Sunday"
 
-def extract(email, token, course):
+def extract(email, token, course, course_name):
 
 	headers = {"Authorization" : "Bearer {}".format(token)}
 	params = {"state[]" : "all"}
@@ -34,7 +34,7 @@ def extract(email, token, course):
 	r = requests.get(url, headers = headers, params = params)
 
 	assignment_groups = r.json()
-	print(assignment_groups)
+	# print(assignment_groups)
 	for group in assignment_groups:
 		for assignment in group["assignments"]:
 			assignment_name = assignment["name"]
@@ -55,7 +55,6 @@ def extract(email, token, course):
 				due_date = ""
 				due_time = ""
 				day_name = ""
-			course_name = toDB.get_class(email, course)
 			final_sch["course_name"].append(course_name)
 			final_sch["email"].append(email)
 			final_sch["course_num"].append(course)

@@ -124,6 +124,25 @@ def setup_db(username_local, course_string):
     except:
         return toDB.get_success(False)
 
+@app.route('/add_course_db/<username_local>/<course_name>/<course_num>', methods=['POST', 'GET'])
+def add_course_db(username_local, course_name, course_num):
+    try:
+        temp_name = course_name.replace("_", " ")
+        toDB.set_up(username_local, temp_name, course_num)
+        return toDB.get_success(True)
+    except:
+        return toDB.get_success(False)
+
+@app.route('/add_assignment_db/<username_local>/<course_name>/<course_num>/<assignment_name>/<due_date>/<due_time>/<day_name>', methods=['POST', 'GET'])
+def add_assignment_db(username_local, course_name, course_num, assignment_name, due_date, due_time, day_name):
+    try:
+        temp_name = course_name.replace("_", " ")
+        temp_assignment = assignment_name.replace("_", " ")
+        toDB.add_assignment(username_local, temp_name, course_name, temp_assignment, due_date, due_time, day_name, 'user', 'false')
+        return toDB.get_success(True)
+    except:
+        return toDB.get_success(False)
+
 if __name__ == "__main__":
     # app.run(ssl_context='adhoc')
     app.run()

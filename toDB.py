@@ -143,7 +143,7 @@ def add_schedule(schedule):
 
 def get_classes(email):
 	sql = """
-			SELECT course_num FROM user_classes 
+			SELECT course_name, course_num FROM user_classes 
 			WHERE email = '{}'
 		""".format(email)
 	df = pd.read_sql(sql, engine)
@@ -188,8 +188,10 @@ def update_schedule(email, token):
 
 	df = get_classes(email)
 
-	for course in df['course_num']:
-		getFromAPI.extract(email, token, course)
+	for x in range(len(df['course_num'])):
+		print(df['course_num'][x])
+		print(df['course_name'][x])
+		getFromAPI.extract(email, token, df['course_num'][x], df['course_name'][x])
 
 
 def schedule_to_json(email):
@@ -202,8 +204,8 @@ def schedule_to_json(email):
 	return file
 
 
-def add_assignment(email, course_num, assignment_name, due_date, due_time, day_name, method, submission_status):
-	schedule = {"email" : [],"course_num": [] ,"course_name": [], "assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
+def add_assignment(email, course_num, course_name, assignment_name, due_date, due_time, day_name, method, submission_status):
+	schedule = {"email" : [email],"course_num": [course_num] ,"course_name": [course_name], "assignment_name" : [assignment_name], "due_date": [due_date], "due_time": [due_time], "day_name": [day_name], "method": [method], "submission_status": [submission_status]}
 	df = pd.DataFrame(schedule)
 	df.to_sql('assignments', engine, if_exists = 'replace', index = False)
 	print("done")
