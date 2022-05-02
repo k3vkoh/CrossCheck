@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request
 import toDB
+import json
 
 
 app = Flask(__name__)
@@ -86,10 +87,9 @@ def show_schedule():
 
 @app.route('/login_db/<username_local>/<password_local>')
 def login_db(username_local, password_local):
-    if toDB.login(username_local, password_local):
-        return "True"
-    else:
-        return "False"
+    return toDB.get_success(toDB.login(username_local, password_local))
+
+
 
 @app.route('/get_schedule/<username_local>/<password_local>')
 def get_schedule(username_local, password_local):
@@ -104,14 +104,20 @@ def get_schedule(username_local, password_local):
 
 @app.route('/signup_db/<username_local>/<password_local>/<canvas_username_local>/<canvas_password_local>', methods=['POST', 'GET'])
 def signup_db(username_local, password_local, canvas_username_local, canvas_password_local):
-    token_local = toDB.get_token(canvas_username_local, canvas_password_local)
-    toDB.signup(username_local, password_local, canvas_username_local, canvas_password_local, token_local)
-    return "True"
+    try:
+        token_local = toDB.get_token(canvas_username_local, canvas_password_local)
+        toDB.signup(username_local, password_local, canvas_username_local, canvas_password_local, token_local)
+        return {"success": "true"}
+    except:
+        return {"success": "false"} 
 
 @app.route('/setup_db/<username_local>/<course_name>/<course_num>', methods=['POST', 'GET'])
 def setup_db(username_local, course_name, course_num):
-    toDB.set_up(username_local, course_name, course_num)
-    return "True"
+    try:
+        toDB.set_up(username_local, course_name, course_num)
+        return {"success": "true"}
+    except:
+        return {"success": "false"} 
 
 if __name__ == "__main__":
     # app.run(ssl_context='adhoc')

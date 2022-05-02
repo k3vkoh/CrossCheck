@@ -247,6 +247,16 @@ def reset():
 	df.to_sql('assignments', engine, if_exists = 'replace', index = False, dtype = Text)
 	print("done")
 
+def get_success(success):
+	if success:
+		schedule = {"success": ["true"]}
+	else:
+		schedule = {"success": ["false"]}
+	df = pd.DataFrame(schedule)
+	file = df.to_json(index = False, orient = 'table', indent = 1)
+	return file
+
+
 
 if __name__ == "__main__":
 	canvas_username = 'kohke'
