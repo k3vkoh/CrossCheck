@@ -112,8 +112,8 @@ def signup(email, password, canvas_us, canvas_pw, token):
 
 
 
-def set_up(email, course_name, course_num):
-	df = pd.DataFrame({"email": [email], "course_name": [course_name], "course_num": [course_num]})
+def set_up(email, course_name, course_num, method):
+	df = pd.DataFrame({"email": [email], "course_name": [course_name], "course_num": [course_num], "method": [method]})
 	df.to_sql('user_classes', engine, if_exists = 'append', index = False)
 	print("done")
 	return True
@@ -144,7 +144,7 @@ def add_schedule(schedule):
 def get_classes(email):
 	sql = """
 			SELECT course_name, course_num FROM user_classes 
-			WHERE email = '{}'
+			WHERE email = '{}' and method = 'api'
 		""".format(email)
 	df = pd.read_sql(sql, engine)
 
@@ -207,7 +207,7 @@ def schedule_to_json(email):
 def add_assignment(email, course_num, course_name, assignment_name, due_date, due_time, day_name, method, submission_status):
 	schedule = {"email" : [email],"course_num": [course_num] ,"course_name": [course_name], "assignment_name" : [assignment_name], "due_date": [due_date], "due_time": [due_time], "day_name": [day_name], "method": [method], "submission_status": [submission_status]}
 	df = pd.DataFrame(schedule)
-	df.to_sql('assignments', engine, if_exists = 'replace', index = False)
+	df.to_sql('assignments', engine, if_exists = 'append', index = False)
 	print("done")
 
 def clear_all():
@@ -244,9 +244,9 @@ def clear_all():
 	print("cleared all")
 
 def reset():
-	schedule = {"email" : [],"course_num": [] ,"course_name": [], "assignment_name" : [], "due_date": [], "due_time": [], "day_name": [], "method": [], "submission_status": []}
+	schedule = {"email" : [],"course_num": [] ,"course_name": [], "course_num" : [], "method": []}
 	df = pd.DataFrame(schedule)
-	df.to_sql('assignments', engine, if_exists = 'replace', index = False, dtype = Text)
+	df.to_sql('user_classes', engine, if_exists = 'replace', index = False, dtype = Text)
 	print("done")
 
 def get_success(success):

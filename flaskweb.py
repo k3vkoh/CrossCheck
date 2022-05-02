@@ -119,16 +119,16 @@ def setup_db(username_local, course_string):
         for x in temp:
             temp_split = x.split(':')
             course_name = temp_split[0].replace("_", " ")
-            toDB.set_up(username_local, course_name, temp_split[1])
+            toDB.set_up(username_local, course_name, temp_split[1], "api")
         return toDB.get_success(True)
     except:
         return toDB.get_success(False)
 
-@app.route('/add_course_db/<username_local>/<course_name>/<course_num>', methods=['POST', 'GET'])
-def add_course_db(username_local, course_name, course_num):
+@app.route('/add_course_db/<username_local>/<course_name>/<course_num>/<method>', methods=['POST', 'GET'])
+def add_course_db(username_local, course_name, course_num, method):
     try:
         temp_name = course_name.replace("_", " ")
-        toDB.set_up(username_local, temp_name, course_num)
+        toDB.set_up(username_local, temp_name, course_num, method)
         return toDB.get_success(True)
     except:
         return toDB.get_success(False)
