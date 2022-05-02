@@ -104,20 +104,25 @@ def get_schedule(username_local, password_local):
 
 @app.route('/signup_db/<username_local>/<password_local>/<canvas_username_local>/<canvas_password_local>', methods=['POST', 'GET'])
 def signup_db(username_local, password_local, canvas_username_local, canvas_password_local):
+    print("signup_db")
     try:
         token_local = toDB.get_token(canvas_username_local, canvas_password_local)
         toDB.signup(username_local, password_local, canvas_username_local, canvas_password_local, token_local)
-        return {"success": "true"}
+        return toDB.get_success(True)
     except:
-        return {"success": "false"} 
+        return toDB.get_success(False)
 
-@app.route('/setup_db/<username_local>/<course_name>/<course_num>', methods=['POST', 'GET'])
-def setup_db(username_local, course_name, course_num):
+@app.route('/setup_db/<username_local>/<course_string>', methods=['POST', 'GET'])
+def setup_db(username_local, course_string):
     try:
-        toDB.set_up(username_local, course_name, course_num)
-        return {"success": "true"}
+        temp = course_string.split(',')
+        for x in temp:
+            temp_split = x.split(':')
+            course_name = temp_split[0].replace("_", " ")
+            toDB.set_up(username_local, course_name, temp_split[1])
+        return toDB.get_success(True)
     except:
-        return {"success": "false"} 
+        return toDB.get_success(False)
 
 if __name__ == "__main__":
     # app.run(ssl_context='adhoc')

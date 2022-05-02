@@ -289,9 +289,9 @@ if __name__ == "__main__":
 	# schedule_to_json(email)
 
 	# last step for demonstration
-	# clear_all()
+	clear_all()
 
-	reset()
+	# reset()
 
 	# print(get_token_db('kohke@bc.edu'))
 
